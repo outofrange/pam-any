@@ -99,6 +99,6 @@ impl PamHooks for PamAny {
             }
         }
         println("Done here")
-        PAM_AUTH_ERR
+        return PAM_AUTH_ERR
     }
 }
