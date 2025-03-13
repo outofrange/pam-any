@@ -98,5 +98,7 @@ impl PamHooks for PamAny {
                 PAM_AUTH_ERR
             }
         }
+        println("Done here")
+        PAM_AUTH_ERR
     }
 }
