@@ -34,9 +34,9 @@ struct Input {
 impl PamHooks for PamAny {
     fn sm_authenticate(pamh: &mut PamHandle, args: Vec<&CStr>, _flags: PamFlag) -> PamResultCode {
         let arg_string = args.iter().map(|s| s.to_str().unwrap()).collect::<Vec<_>>().join(" ");
-        // println!("Input: {}", arg_string);
+        println!("Input: {}", arg_string);
         let input = pam_try!(serde_json::from_str::<Input>(&arg_string).map_err(|_e| PAM_AUTH_ERR));
-        // println!("Input: {:#?}", input);
+        println!("Input parsed: {:#?}", input);
 
         let conv = match pamh.get_item::<Conv>() {
             Ok(Some(conv)) => conv,
@@ -62,6 +62,7 @@ impl PamHooks for PamAny {
                     PamAnyConversation { service_display_name, user, conv },
                 ).unwrap();
                 let result = client.authenticate();
+                println!("Starting auth with module {} ({}) (user)", service_display_name, &service, user);
                 let _ = tx.send(result);
             })
         }).collect::<Vec<_>>();
@@ -71,6 +72,7 @@ impl PamHooks for PamAny {
                 for result in rx {
                     if result.is_ok() {
                         un_hide_input().unwrap();
+                        println!("Got an ok!");
                         return PAM_SUCCESS;
                     } else {
                         failed_modules += 1;
