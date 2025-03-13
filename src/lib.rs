@@ -62,7 +62,7 @@ impl PamHooks for PamAny {
                     PamAnyConversation { service_display_name, user, conv },
                 ).unwrap();
                 let result = client.authenticate();
-                println!("Starting auth with module {} ({}) (user)", service_display_name, &service, user);
+                println!("Starting auth with module {} ({})", service_display_name, &service);
                 let _ = tx.send(result);
             })
         }).collect::<Vec<_>>();
